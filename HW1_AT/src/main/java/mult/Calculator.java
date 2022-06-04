@@ -1,9 +1,5 @@
 package mult;
 
-import mult.MultOperation;
-
-import java.io.Reader;
-
 public class Calculator {
     private DigitReader reader = new ConsoleReaderClass();
 
