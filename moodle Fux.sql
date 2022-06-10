@@ -1,0 +1,131 @@
+-------------------------------  MOODLE.ANTARA -------------------------------
+
+---- Задание(запрос) №1 -----
+SELECT *
+FROM LANIT.AIRCRAFTS_DATA ad
+WHERE ad.AIRCRAFT_CODE IN ('320','321','733')
+
+---- Задание(запрос) №2 -----
+SELECT ad.AIRCRAFT_CODE
+FROM LANIT.AIRCRAFTS_DATA ad
+WHERE ad.AIRCRAFT_CODE NOT LIKE '3%'
+
+---- Задание(запрос) №3 (email OLGA нет, есть olga )-----
+SELECT *
+FROM LANIT.TICKETS t
+WHERE t.PASSENGER_NAME LIKE '%OLGA%' 
+AND t.EMAIL LIKE '%olga%' OR t.EMAIL IS NULL
+
+---- Задание(запрос) №4 -----
+SELECT *
+FROM LANIT.AIRCRAFTS_DATA ad 
+WHERE ad.RANGE IN ('5600', '5700')
+ORDER BY ad."RANGE" DESC 
+
+---- Задание(запрос) №5 -----
+SELECT ad.CITY, ad.AIRPORT_NAME 
+FROM LANIT.AIRPORTS_DATA ad
+WHERE CITY LIKE 'Moscow'
+ORDER BY AIRPORT_NAME
+
+---- Задание(запрос) №6 -----
+SELECT DISTINCT ad.CITY
+FROM LANIT.AIRPORTS_DATA ad
+WHERE TIMEZONE LIKE 'Europe%'
+
+---- Задание(запрос) №7 -----
+SELECT b.BOOK_REF, b.TOTAL_AMOUNT*0.9
+FROM LANIT.BOOKINGS b 
+WHERE b.BOOK_REF LIKE '%3A4%' 
+
+---- Задание(запрос) №8 -----
+SELECT CONCAT('Data for seat no: ', s.seat_no)
+FROM LANIT.SEATS s
+WHERE s.AIRCRAFT_CODE = '320'
+AND s.FARE_CONDITIONS = 'Business'
+
+---- Задание(запрос) №9 -----
+SELECT min(TOTAL_AMOUNT),max(TOTAL_AMOUNT)
+FROM LANIT.BOOKINGS b 
+WHERE b.BOOK_DATE BETWEEN '01.01.2017' AND '01.01.2018'
+
+---- Задание(запрос) №10 -----
+SELECT AIRCRAFT_CODE ,COUNT(*)  
+FROM LANIT.SEATS s  
+GROUP BY s.AIRCRAFT_CODE 
+ORDER BY 1
+
+---- Задание(запрос) №11 -----
+SELECT AIRCRAFT_CODE ,FARE_CONDITIONS ,COUNT(*)  
+FROM LANIT.SEATS s  
+GROUP BY s.AIRCRAFT_CODE, s.FARE_CONDITIONS 
+ORDER BY 1, 2 
+
+---- Задание(запрос) №12 -----
+SELECT t.PASSENGER_NAME, t.TICKET_NO 
+FROM LANIT.TICKETS t
+WHERE t.PASSENGER_NAME = 'ALEKSANDR STEPANOV'
+AND t.PHONE LIKE '%11'
+
+---- Задание(запрос) №13 -----
+SELECT COUNT(t.TICKET_NO), t.PASSENGER_NAME 
+FROM LANIT.TICKETS t 
+WHERE t.PASSENGER_NAME LIKE 'ALEKSANDR%'
+GROUP BY t.PASSENGER_NAME
+HAVING COUNT(t.TICKET_NO)>2000
+ORDER BY COUNT(t.TICKET_NO) DESC 
+
+---- Задание(запрос) №14 -----
+SELECT trunc(t.date_departure) date_departure, COUNT(*) countFlight
+FROM LANIT.flights t
+WHERE trunc(t.date_departure, 'mm')= to_date('01.09.2017', 'dd.mm.yyyy')
+GROUP BY trunc(t.date_departure)
+HAVING  count(*)>500
+ORDER BY date_departure
+
+---- Задание(запрос) №15 ----- 
+SELECT CITY
+FROM LANIT.AIRPORTS_DATA ad 
+GROUP BY CITY
+HAVING COUNT(CITY)>1
+
+---- Задание(запрос) №16 -----
+SELECT ad.MODEL, LISTAGG(s.SEAT_NO, ','  ) WITHIN GROUP (ORDER BY s.SEAT_NO) seatNumber
+FROM LANIT.AIRCRAFTS_DATA ad , SEATS s 
+WHERE ad.AIRCRAFT_CODE = s.AIRCRAFT_CODE
+GROUP BY ad.MODEL  
+
+---- Задание(запрос) №17 -----
+SELECT * 
+FROM LANIT.AIRPORTS_DATA ad FULL OUTER JOIN LANIT.FLIGHTS f 
+ON f.DEPARTURE_AIRPORT = ad.AIRPORT_CODE 
+WHERE ad.CITY = 'Moscow' AND trunc(f.DATE_DEPARTURE, 'mm')= to_date('01.09.2017', 'dd.mm.yyyy')
+
+---- Задание(запрос) №18 -----
+SELECT COUNT(ad.AIRPORT_CODE) AS Count1, ad.AIRPORT_CODE 
+FROM LANIT.AIRPORTS_DATA ad FULL OUTER JOIN LANIT.FLIGHTS f 
+ON f.DEPARTURE_AIRPORT = ad.AIRPORT_CODE 
+WHERE ad.CITY = 'Moscow' AND trunc(f.DATE_DEPARTURE , 'yyyy')= to_date('01.01.2017', 'dd.mm.yyyy')
+GROUP BY ad.AIRPORT_CODE 
+
+---- Задание(запрос) №19 -----
+SELECT DEPARTURE_AIRPORT, TO_CHAR(DATE_DEPARTURE, 'yyyy-mm'), COUNT(FLIGHT_NO)
+FROM LANIT.FLIGHTS f JOIN LANIT.AIRPORTS_DATA ad
+ON f.DEPARTURE_AIRPORT = ad.AIRPORT_CODE
+WHERE ad.CITY = 'Moscow' AND TO_CHAR(DATE_DEPARTURE, 'yyyy') = '2017'
+GROUP BY DEPARTURE_AIRPORT, TO_CHAR(DATE_DEPARTURE, 'yyyy-mm')
+ORDER BY TO_CHAR(DATE_DEPARTURE, 'yyyy-mm')
+
+---- Задание(запрос) №20 -----
+SELECT t.TICKET_NO, b.BOOK_REF 
+FROM BOOKINGS b JOIN TICKETS t
+ON b.BOOK_REF = t.BOOK_REF 
+WHERE b.BOOK_REF like '3A4B%'
+
+---- Задание(запрос) №21 -----
+SELECT tf.FLIGHT_ID, t.BOOK_REF, tf.TICKET_NO 
+FROM TICKET_FLIGHTS tf JOIN TICKETS t 
+ON tf.TICKET_NO = t.TICKET_NO
+WHERE t.BOOK_REF IN (SELECT b.BOOK_REF 
+				     FROM BOOKINGS b 
+					 WHERE b.BOOK_REF like '3A4B%')
